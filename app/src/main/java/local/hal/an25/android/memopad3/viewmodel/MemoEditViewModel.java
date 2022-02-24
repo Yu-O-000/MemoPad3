@@ -125,3 +125,8 @@ public class MemoEditViewModel extends AndroidViewModel {
 		return result;
 	}
 }
+
+/*
+	ViewModel
+		... MVCのModelのようなもの。データの種類に応じてDAOとMainActivityの橋渡しを行う？
+ */
