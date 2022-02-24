@@ -13,6 +13,7 @@ import local.hal.an25.android.memopad3.viewmodel.MemoListViewModel;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,11 +64,13 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		// RecyclerViewの設定
 		_rvMemo = findViewById(R.id.rvMemo);
 		LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
 		_rvMemo.setLayoutManager(layout);
 		DividerItemDecoration decoration = new DividerItemDecoration(MainActivity.this, layout.getOrientation());
 		_rvMemo.addItemDecoration(decoration);
+		// Listのset？
 		List<Memo> memoList = new ArrayList<>();
 		_adapter = new MemoListAdapter(memoList);
 		_rvMemo.setAdapter(_adapter);
@@ -135,17 +138,32 @@ public class MainActivity extends AppCompatActivity {
 	 * フィールド_onlyImportantの値に合わせて生成するデータを切り替える。
 	 */
 	private void createRecyclerView() {
+		Log.d("__DEBUG__", "[RUN]: createRecyclerView");
+
 		_memoListLiveData.removeObserver(_memoListObserver);
 		_memoListLiveData = _memoListViewModel.getMemoList(_onlyImportant);
 		_memoListLiveData.observe(MainActivity.this, _memoListObserver);
+			/*
+				observe = addObserver
+
+				Q. なぜ一度removeする？
+			 */
 	}
 
 	/**
 	 * ビューモデル中のメモ情報リストに変更があった際に、画面の更新を行う処理が記述されたクラス。
 	 */
 	private class MemoListObserver implements Observer<List<Memo>> {
+		/**
+		 * どこかの通知メソッドを実行した際に実行される。
+		 * 	Q. もとはどこ？
+		 *
+		 * @param memoList	List[Memo]: 更新対象リスト
+		 */
 		@Override
 		public void onChanged(List<Memo> memoList) {
+			Log.d("__DEBUG__", "[RUN]: onChanged");
+
 			_adapter.changeMemoList(memoList);
 		}
 	}
@@ -226,6 +244,11 @@ public class MainActivity extends AppCompatActivity {
 		public void changeMemoList(List<Memo> listData) {
 			_listData = listData;
 			notifyDataSetChanged();
+			Log.d("__DEBUG__", "[RUN]: notifyDataSetChanged");
+				/*
+					notifyDataSetChanged()
+						... Subjectの通知用メソッド。RecyclerViewに属する。
+				 */
 		}
 	}
 
@@ -244,3 +267,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 }
+
+/*
+	Observer ... オブジェクトを観測し、変更があった場合に任意の動作をするデザインパターン
+ */
