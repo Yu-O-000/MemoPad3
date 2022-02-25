@@ -56,8 +56,8 @@ public class MemoEditActivity extends AppCompatActivity {
 		if(_mode == Consts.MODE_INSERT) {
 			TextView tvTitleEdit = findViewById(R.id.tvTitleEdit);
 			tvTitleEdit.setText(R.string.tv_title_insert);
-		}
-		else {
+
+		} else {
 			_idNo = intent.getIntExtra("idNo", 0);
 			Memo memo = _memoEditViewModel.getMemo(_idNo);
 			EditText etInputTitle = findViewById(R.id.etInputTitle);
@@ -77,8 +77,8 @@ public class MemoEditActivity extends AppCompatActivity {
 		MenuInflater inflater = getMenuInflater();
 		if(_mode == Consts.MODE_INSERT) {
 			inflater.inflate(R.menu.menu_options_add, menu);
-		}
-		else {
+
+		} else {
 			inflater.inflate(R.menu.menu_options_edit, menu);
 		}
 		return true;
@@ -93,12 +93,13 @@ public class MemoEditActivity extends AppCompatActivity {
 				String inputTitle = etInputTitle.getText().toString();
 				if(inputTitle.equals("")) {
 					Toast.makeText(MemoEditActivity.this, R.string.msg_input_title, Toast.LENGTH_SHORT).show();
-				}
-				else {
+
+				} else {
 					EditText etInputContent = findViewById(R.id.etInputContent);
 					String inputContent = etInputContent.getText().toString();
 					SwitchMaterial swImportant = findViewById(R.id.swImportant);
 					int inputImportant = 0;
+
 					if(swImportant.isChecked()) {
 						inputImportant = 1;
 					}
@@ -108,21 +109,24 @@ public class MemoEditActivity extends AppCompatActivity {
 					memo.content = inputContent;
 					memo.important = inputImportant;
 					memo.updatedAt = new Timestamp(System.currentTimeMillis());
+
 					if(_mode == Consts.MODE_INSERT) {
 						result = _memoEditViewModel.insert(memo);
-					}
-					else {
+
+					} else {
 						memo.id = _idNo;
 						result = _memoEditViewModel.update(memo);
 					}
+
 					if(result <= 0) {
 						Toast.makeText(MemoEditActivity.this, R.string.msg_save_error, Toast.LENGTH_SHORT).show();
-					}
-					else {
+
+					} else {
 						finish();
 					}
 				}
 				return true;
+
 			case R.id.btnDelete:
 				DeleteConfirmDialogFragment dialog = new DeleteConfirmDialogFragment(_memoEditViewModel);
 				Bundle extras = new Bundle();
@@ -131,8 +135,10 @@ public class MemoEditActivity extends AppCompatActivity {
 				FragmentManager manager = getSupportFragmentManager();
 				dialog.show(manager, "DeleteConfirmDialogFragment");
 				return true;
+
 			case android.R.id.home:
 				finish();
+
 			default:
 				return super.onOptionsItemSelected(item);
 		}

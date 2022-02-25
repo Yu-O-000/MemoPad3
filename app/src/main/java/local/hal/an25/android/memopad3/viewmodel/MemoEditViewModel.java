@@ -32,6 +32,7 @@ public class MemoEditViewModel extends AndroidViewModel {
 	 */
 	public MemoEditViewModel(Application application) {
 		super(application);
+			/* AndroidViewModelを継承する際は必須。 */
 		_db = AppDatabase.getDatabase(application);
 	}
 
@@ -127,6 +128,9 @@ public class MemoEditViewModel extends AndroidViewModel {
 }
 
 /*
-	ViewModel
-		... MVCのModelのようなもの。データの種類に応じてDAOとMainActivityの橋渡しを行う？
+	AndroidViewModel
+		... Roomなど、ApplicationContextが必要な場合は、ViewModelではなくこちらを継承する。
+			◎必要なもの
+				・ViewModelのコンストラクタで、superへapplicationを渡す。
+				・ActivityのonCreateでfactoryを生成してproviderを作り、getする。
  */

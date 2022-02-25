@@ -70,16 +70,20 @@ public class MainActivity extends AppCompatActivity {
 		_rvMemo.setLayoutManager(layout);
 		DividerItemDecoration decoration = new DividerItemDecoration(MainActivity.this, layout.getOrientation());
 		_rvMemo.addItemDecoration(decoration);
-		// Listのset？
+		// 空Listのset
 		List<Memo> memoList = new ArrayList<>();
 		_adapter = new MemoListAdapter(memoList);
 		_rvMemo.setAdapter(_adapter);
 
+		// ViewModel準備
 		ViewModelProvider.AndroidViewModelFactory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication());
+			/* AndroidViewModel生成用のFactoryを取得 */
 		ViewModelProvider provider = new ViewModelProvider(MainActivity.this, factory);
+			/* ViewModelを継承したものと違い、factoryを用いてproviderを作成。 */
 		_memoListViewModel = provider.get(MemoListViewModel.class);
-		_memoListObserver = new MemoListObserver();
-		_memoListLiveData = new MutableLiveData<>();
+
+		_memoListObserver = new MemoListObserver();		// List内に変更があった場合にViewを更新
+		_memoListLiveData = new MutableLiveData<>();	// 値が割り当てられていないMutableLiveDataを作成
 
 		createRecyclerView();
 	}
@@ -147,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
 				observe = addObserver
 
 				Q. なぜ一度removeする？
+					A. 重要の絞り込み可否でLiveDataが違うものになってしまうため、自動更新ができない。
+						そのため、毎度LiveDataを作り直してObserverをセットしてる。
+						LiveDataが一つの場合はremove, observeは１回のみ。
 			 */
 	}
 
@@ -157,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 		/**
 		 * どこかの通知メソッドを実行した際に実行される。
 		 * 	Q. もとはどこ？
-		 *
+		 *		A. LiveData上
 		 * @param memoList	List[Memo]: 更新対象リスト
 		 */
 		@Override
@@ -270,4 +277,11 @@ public class MainActivity extends AppCompatActivity {
 
 /*
 	Observer ... オブジェクトを観測し、変更があった場合に任意の動作をするデザインパターン
+
+	ListenableFuture ... 一回限りのSQL（One-Shot）を実行する際のもの。
+	LiveData ... ObserverのSubject（監視対象）
+		DAO上の各Queryの戻り値をListenableFutureかLiveDataかによってどちらの手法を取るか自動生成してくれる。
+
+		1. ActivityのonCreateでListViewオブジェクトに空のAdapterをsetする。
+		2. Observerをセットする。
  */
